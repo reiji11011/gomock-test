@@ -35,3 +35,28 @@ func TestUserUsecase_ExecuteUserUsecase_Mock(t *testing.T) {
 		t.Errorf("got: %v\nwant: %v", actual, expected)
 	}
 }
+
+// モックあり
+// 複数パターンのテストを実施
+func TestUserUsecase_ExecuteUserUsecase_Mock2(t *testing.T) {
+	// IFを満たす構造体を使いテストを実施
+	userRepository := MockFreeUserRepository{}
+	userUsecase := UserUsecase{userRepository: userRepository}
+	// テストケース1
+	actual := userUsecase.ExecuteUserUsecase(1)
+	expected := 2
+
+	if actual != expected {
+		t.Errorf("got: %v\nwant: %v", actual, expected)
+	}
+
+	// テストケース2
+	// 同じモックを使うと失敗する
+	actual = userUsecase.ExecuteUserUsecase(2)
+	expected = 3
+
+	if actual != expected {
+		t.Errorf("got: %v\nwant: %v", actual, expected)
+	}
+
+}
