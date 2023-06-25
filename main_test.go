@@ -2,37 +2,36 @@ package main
 
 import "testing"
 
-func Test_Calculate(t *testing.T) {
+type MockFreeUserRepository struct{}
 
-}
-
-// Calculateを実際に呼び出してテストする
-func TestFreeUser_Calculate(t *testing.T) {
-	freeUser := FreeUserRepository{}
-	actual := freeUser.Calculate(1)
-	expected := 2
-
-	if actual != expected {
-		t.Errorf("got: %v\nwant: %v", actual, expected)
-	}
-}
-
-// Calculateをモックに差し替えてテストする
-// モックを用意
-type MockUser struct{}
-
-// モックの振る舞いを定義
-func (m *MockUser) Calculate(number int) int {
+func (r MockFreeUserRepository) Calculate(number int) int {
+	// テストケースを満たすように期待する値を返却する
 	return 2
 }
 
-func TestFreeUser_Calculate_Mock(t *testing.T) {
-	mockUser := MockUser{}
-	actual := mockUser.Calculate(1)
+// モックなし
+func TestUserUsecase_ExecuteUserUsecase(t *testing.T) {
+	// FreeUserRepositoryに依存しているため、FreeUserRepositoryがないとテストができない。
+	userRepository := FreeUserRepository{}
+	userUsecase := UserUsecase{userRepository: userRepository}
+	actual := userUsecase.ExecuteUserUsecase(1)
 	expected := 2
 
 	if actual != expected {
 		t.Errorf("got: %v\nwant: %v", actual, expected)
 	}
+}
 
+// モックあり
+func TestUserUsecase_ExecuteUserUsecase_Mock(t *testing.T) {
+	// IFを満たす構造体を使いテストを実施
+	userRepository := MockFreeUserRepository{}
+	userUsecase := UserUsecase{userRepository: userRepository}
+	// 内部でモックのメソッドCalculateが呼ばれる。
+	actual := userUsecase.ExecuteUserUsecase(1)
+	expected := 2
+
+	if actual != expected {
+		t.Errorf("got: %v\nwant: %v", actual, expected)
+	}
 }
