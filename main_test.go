@@ -9,6 +9,14 @@ func (r MockFreeUserRepository) Calculate(number int) int {
 	return 2
 }
 
+// 新しいモックの追加
+type MockFreeUserRepository2 struct{}
+
+func (r MockFreeUserRepository2) Calculate(number int) int {
+	// テストケースを満たすように期待する値を返却する
+	return 3
+}
+
 // モックなし
 func TestUserUsecase_ExecuteUserUsecase(t *testing.T) {
 	// FreeUserRepositoryに依存しているため、FreeUserRepositoryがないとテストができない。
@@ -51,8 +59,10 @@ func TestUserUsecase_ExecuteUserUsecase_Mock2(t *testing.T) {
 	}
 
 	// テストケース2
-	// 同じモックを使うと失敗する
-	actual = userUsecase.ExecuteUserUsecase(2)
+	// テストケースに合わせてモックを追加
+	userRepository2 := MockFreeUserRepository2{}
+	userUsecase2 := UserUsecase{userRepository: userRepository2}
+	actual = userUsecase2.ExecuteUserUsecase(2)
 	expected = 3
 
 	if actual != expected {
